@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>光互联论坛笔记：连接，还是连接 — Promix</title>
+  <title>xPO论坛笔记：连接，还是连接 — Promix</title>
   <meta name="description" content="2026 年「xPO 赋能 AI 数据中心光互联论坛」的完整记录与梳理。从需求侧数据到 NPO/CPO/XPO 路线之争，再到硅光、FAU、空芯光纤等环节，附全部现场图表与数据出处。个人记录，不构成投资建议。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,14 +28,14 @@
     <div class="wrap">
       <header class="article-header">
         <p class="kicker">产业观察 · 论坛笔记</p>
-        <h1>光互联论坛笔记：连接，还是连接</h1>
+        <h1>xPO论坛笔记：连接，还是连接</h1>
         <p class="article-meta">2026-05-28 · 上海漕河泾万丽酒店 · 阅读约 18 分钟</p>
       </header>
 
       <article class="prose">
         <p class="lead">
           这是我参加「xPO 赋能 AI 数据中心光互联论坛」之后的完整整理。把现场听到的数据、几条技术路线、
-          以及我自己梳理出来的判断都记在这里，方便日后回头对照。文章偏长，更像是给自己的一份归档。
+          以及我自己梳理出来的判断都记在这里，方便日后回头对照。
         </p>
 
         <div class="callout">
@@ -44,35 +44,21 @@
           可能有误读、也可能被后续事实推翻。文中提到的任何公司或技术，都只是论坛信息的转述，不是推荐。
         </div>
 
-        <p>
-          先交代背景：这场论坛 2026 年 5 月 28 日在上海漕河泾万丽酒店举办，主题是 xPO（各类近封装/共封装光学）
-          如何支撑 AI 数据中心的光互联。演讲方既有需求侧（阿里云、百度），也有研究机构
-          （LightCounting、中国信通院、中国移动研究院），还有供给侧厂商（长光华芯、逻云光、是德科技等）。
-          一场把"买家、卖家、裁判"凑齐的会，信息密度确实高，所以我决定认真整理一遍。
-        </p>
-
         <hr>
 
-        <h2>一、一个判断：瓶颈换了位置</h2>
-        <p>
-          这两年的注意力几乎都压在算力本身——更强的卡、更大的模型、更高的参数量。
-          但 AI 训练早就不是一块卡的事，而是上万颗芯片协同工作。决定整体性能的，
-          慢慢从"单卡多快"变成了"卡与卡之间的数据能多快地流动"。
-        </p>
+        <h2>一、连接，更重要了</h2>
         <p>
           百度的演讲里把这件事概括成一个词：<strong>Communication Wall（通信墙）</strong>——
           算力瓶颈正从"芯片内部互联"转移到"芯片之间互联"。如果这个判断成立，
           那么光互联的定位就变了：从锦上添花的性能优化项，变成集群能不能正常工作的刚需项。
           这是我整场最想记下的一点，也是后面所有结论的前提。
         </p>
-        <p class="source">▷ 来源：百度演讲，"Communication Wall"，2026 年 5 月 28 日论坛现场</p>
 
         <figure>
           <img src="../assets/img/cioe/fig04.jpg" alt="百度 Communication Wall" loading="lazy">
           <figcaption>百度：算力瓶颈已从芯片内转移到芯片间，光互联被视为关键解法</figcaption>
         </figure>
 
-        <p>论坛上把互联场景分成了几类，我抄下来备忘：</p>
         <ul>
           <li><strong>Scale-Up 互联（短距 &lt;3m）</strong>：GPU 直连，带宽密度与功耗约束极严，催生 NPO/CPO 需求；</li>
           <li><strong>Scale-Across 互联（跨园区 &gt;2km）</strong>：800G/1.6T 相干（Coherent）光互联是主要技术路径；</li>
@@ -80,28 +66,21 @@
         </ul>
 
         <figure>
-          <img src="../assets/img/cioe/fig16.jpg" alt="百度智算中心内部互联三类场景" loading="lazy">
-          <figcaption>百度：智算中心内部互联的三类场景——单节点 → AI 集群 → 超级算力集群，每层需求不同</figcaption>
+          <img src="../assets/img/cioe/fig16.jpg" alt="智算中心内部互联三类场景" loading="lazy">
+          <figcaption>互联的三类场景——单节点 → AI 集群 → 超级算力集群，每层需求不同</figcaption>
         </figure>
 
         <blockquote>算力是肌肉，互联是血管。血管不通，肌肉再大也使不上劲。</blockquote>
 
         <hr>
 
-        <h2>二、需求侧：先把数字摆清楚</h2>
+        <h2>二、需求侧：还是很大，再忍一忍</h2>
         <p>
-          需求侧这部分分歧不大，我尽量把现场的数字原样记下来。最主要的一组来自 LightCounting：
           2026 年四大云商（亚马逊、谷歌、微软、Meta）的 AI 资本开支合计 <strong>$7250 亿</strong>，
           同比 <strong>+77%</strong>，且增速仍在加速，谷歌一家近乎翻倍。
         </p>
-        <p class="source">▷ 来源：LightCounting 曹丽，《全球 AI 数据中心互联市场分析》，2026 年 5 月 28 日论坛现场</p>
 
-        <figure>
-          <img src="../assets/img/cioe/fig01.jpg" alt="LightCounting 全球 AI 数据中心互联市场分析" loading="lazy">
-          <figcaption>LightCounting 曹丽：AI 算力驱动的这一轮，被称作"超级周期"</figcaption>
-        </figure>
-
-        <p>把现场列的关键指标整理成表（数据源同上，LightCounting）：</p>
+        <p>关键指标（数据源：LightCounting）：</p>
         <div class="table-wrap">
         <table>
           <thead><tr><th>市场指标</th><th>2024 实际</th><th>2025 实际</th><th>2026 预测</th><th>2031 预测</th></tr></thead>
@@ -116,7 +95,7 @@
         </div>
 
         <p>
-          数量级是清楚的：未来五六年，连接 AI 芯片的器件市场要翻几倍（光器件 2031 年是 2025 年的 3.5–7 倍）。
+          未来五六年，连接 AI 芯片的器件市场要翻几倍（光器件 2031 年是 2025 年的 3.5–7 倍）。
         </p>
 
         <figure>
