@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>当所有人都盯着 GPU，我在看连接它们的"血管" — Promix</title>
-  <meta name="description" content="一场光互联论坛带给我的思考：当算力不再是单芯片的事，决定上限的反而是芯片之间怎么连。聊聊 NPO、CPO 和那些不性感但很关键的环节。">
+  <title>光互联论坛笔记：连接，正在变成瓶颈 — Promix</title>
+  <meta name="description" content="一场光互联论坛的记录与梳理。算力瓶颈正从芯片内转移到芯片之间，NPO、CPO、硅光、空芯光纤——把听到的和想到的整理一遍。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -28,56 +28,43 @@
     <div class="wrap">
       <header class="article-header">
         <p class="kicker">产业观察</p>
-        <h1>当所有人都盯着 GPU，我在看连接它们的"血管"</h1>
-        <p class="article-meta">2026-05-28 · 写于上海漕河泾 · 阅读约 12 分钟</p>
+        <h1>光互联论坛笔记：连接，正在变成瓶颈</h1>
+        <p class="article-meta">2026-05-28 · 上海漕河泾 · 阅读约 12 分钟</p>
       </header>
 
       <article class="prose">
         <p class="lead">
-          上周我去了一场关于光互联的论坛。出来的时候，脑子里只剩一个念头：
-          大家都在抢着谈 GPU、谈大模型，可几乎没人认真聊聊——这些芯片到底是<em>怎么连起来</em>的。
-          而我越来越觉得，答案就藏在这个被忽略的问题里。
+          一场关于光互联的论坛，听完做的整理。把现场的数据、几条技术路线，
+          以及我自己梳理下来的判断记在这里，方便以后翻。
         </p>
 
         <p>
-          这篇不算严格的会议纪要，更像是我边听边记、回来又琢磨了几天之后的整理。
-          数据和图表都来自现场的演讲（LightCounting、阿里云、百度、中国移动、信通院，还有长光华芯、是德科技这些厂商），
-          但观点是我自己的。先说句免责：<strong>下面这些不构成任何投资建议，我也会犯错。</strong>
+          数据和图表都来自现场演讲——LightCounting、阿里云、百度、中国移动、信通院，
+          以及长光华芯、是德科技等厂商。下面的判断是我自己的，记下来主要是为了过段时间回头对照。
+          按惯例先声明：不构成投资建议。
         </p>
 
-        <h2>先说我最大的一个感受</h2>
+        <h2>核心变化：瓶颈换了位置</h2>
         <p>
-          这两年，所有的聚光灯都打在算力本身上：更强的卡、更大的模型、更高的参数量。
-          但有一件事被反复忽略——<strong>一颗芯片再快，也得跟成千上万颗别的芯片协同工作</strong>。
-          这时候决定整体性能的，往往不是单卡多猛，而是卡和卡之间的数据能多快地流动。
+          这两年的注意力几乎都在算力本身——更强的卡、更大的模型。但 AI 训练早就不是一块卡的事，
+          而是上万颗芯片协同。决定整体性能的，慢慢从"单卡多快"变成了"卡和卡之间的数据能多快地流动"。
         </p>
         <p>
-          论坛上百度的演讲者给了它一个很形象的名字：<strong>Communication Wall（通信墙）</strong>。
-          意思是，算力瓶颈已经从"芯片内部"转移到了"芯片之间"。光互联不再是锦上添花的性能优化，
-          而是 AI 集群能不能正常跑起来的<em>刚需</em>。这一句，基本就是我这趟最大的收获。
+          百度演讲里把这件事叫做 <strong>Communication Wall（通信墙）</strong>：算力瓶颈正从芯片内部
+          转移到芯片之间。这个判断如果成立，光互联就从"性能优化项"变成了"集群能不能跑的刚需项"。
+          这是我这趟最想记下来的一点——它是后面所有结论的前提。
         </p>
 
         <figure>
           <img src="../assets/img/cioe/fig04.jpg" alt="百度 Communication Wall" loading="lazy">
-          <figcaption>百度提出的 "Communication Wall"——瓶颈从芯片内转移到了芯片间</figcaption>
+          <figcaption>百度：Communication Wall——瓶颈从芯片内转移到芯片间</figcaption>
         </figure>
 
-        <blockquote>算力是肌肉，互联是血管。血管不通，肌肉再大也使不上劲。</blockquote>
-
-        <h2>需求侧的数字，确实有点吓人</h2>
+        <h2>需求侧的几个数</h2>
         <p>
-          我一直对"风口"这个词比较警惕，但有些数字摆在面前，还是很难无视。
-          LightCounting 给的一组预测是这样的：2026 年四大云商（亚马逊、谷歌、微软、Meta）的 AI 资本开支
-          加起来 <strong>$7250 亿</strong>，同比 <strong>+77%</strong>——注意，是增速还在<em>加速</em>，不是放缓。
-          谷歌那一家几乎翻倍。
+          LightCounting 的预测里，2026 年四大云商（亚马逊、谷歌、微软、Meta）AI 资本开支合计
+          <strong>$7250 亿</strong>，同比 <strong>+77%</strong>，且增速仍在加速。几个值得留存的数字：
         </p>
-
-        <figure>
-          <img src="../assets/img/cioe/fig01.jpg" alt="LightCounting 全球 AI 数据中心互联市场分析" loading="lazy">
-          <figcaption>LightCounting：AI 算力驱动的这一轮，被他们称作"超级周期"</figcaption>
-        </figure>
-
-        <p>如果嫌上面这张图信息太密，我把几个我觉得最该记住的数挑出来：</p>
 
         <div class="table-wrap">
         <table>
@@ -91,81 +78,67 @@
         </div>
 
         <p>
-          换句话说，未来五六年，连接 AI 芯片的这些"小东西"，市场可能要翻好几倍。
-          而且需求的可见度很长——云厂商的订单已经排到了 2027 年。
+          数量级是清楚的：未来五六年，连接 AI 芯片的器件市场要翻几倍，且订单能见度已排到 2027 年。
+          需求侧这部分，分歧不大。
         </p>
 
         <figure>
-          <img src="../assets/img/cioe/fig03.jpg" alt="云厂商剩余履约义务对比" loading="lazy">
-          <figcaption>云厂商手里的在手订单（RPO），谷歌同比 +131%，能见度创了新高</figcaption>
+          <img src="../assets/img/cioe/fig01.jpg" alt="LightCounting 市场分析" loading="lazy">
+          <figcaption>LightCounting：这一轮被称作 AI 驱动的"超级周期"</figcaption>
         </figure>
 
-        <h2>真正有意思的，是路线之争</h2>
+        <h2>分歧在路线</h2>
         <p>
-          数字之外，论坛上吵得最凶、也最让我觉得"水还很深"的，是技术路线。
-          简单说，光模块正在从"分离"走向"集成"，方向没人有异议；但具体怎么走、谁先走通，分歧很大。
-          现场出现频率最高的就是三个缩写：<strong>NPO、CPO、XPO</strong>。
+          真正还没定论的是技术路线。光模块从"分离"走向"集成"是共识，但怎么走、谁先走通，分歧很大。
+          现场反复出现三个缩写：NPO、CPO、XPO。用大白话记一下区别：
         </p>
-
-        <figure>
-          <img src="../assets/img/cioe/fig05.jpg" alt="xPO 技术演进路线图" loading="lazy">
-          <figcaption>从 DPO（分离）一路走向 CPO（共封装），这个大方向基本是共识</figcaption>
-        </figure>
-
-        <p>我尽量用大白话解释一下这几条路：</p>
         <ul>
-          <li><strong>LPO / NPO</strong>——把光引擎往交换芯片旁边挪一挪，省电、好量产。<em>现在就能落地</em>的方案。</li>
-          <li><strong>CPO（共封装）</strong>——干脆把光引擎和芯片封装在一起，密度最高、最省电，但也最难做，<em>维修都没法换</em>。公认的"技术终态"，可惜量产一推再推。</li>
-          <li><strong>XPO</strong>——一种液冷可插拔的折中路线，还在搞标准。</li>
+          <li><strong>LPO / NPO</strong>——把光引擎往交换芯片旁边挪，省电、好量产，现在就能落地。</li>
+          <li><strong>CPO（共封装）</strong>——光引擎和芯片封在一起，密度最高、最省电，但最难做、坏了不能换。公认的终态，量产一再推迟。</li>
+          <li><strong>XPO</strong>——液冷可插拔的折中路线，还在做标准。</li>
         </ul>
 
         <p>
-          如果让我用一句话总结这场争论：<strong>NPO 是"现在最现实的选择"，CPO 是"未来一定会到、但还没到的答案"。</strong>
-          阿里云的架构师陈钦说得挺到位——
+          归纳成一句：<strong>NPO 是当前最现实的选择，CPO 是迟早会到、但还没到的答案。</strong>
+          阿里云陈钦的说法和我的理解一致：
         </p>
-
         <blockquote>
           Scale-Out 坚守可插拔生态；Scale-Up 转向近封装/共封装，NPO 是当前规模化的最优解，CPO 锚定长期方向。
         </blockquote>
-        <p class="source">—— 阿里云光网络架构师 陈钦 · 论坛现场</p>
-
-        <p>下面这张三条路线的对比，我觉得是全场信息密度最高的一张，贴出来给你参考：</p>
+        <p class="source">—— 阿里云光网络架构师 陈钦</p>
 
         <figure>
-          <img src="../assets/img/cioe/fig08.jpg" alt="CPO/NPO/XPO 五维度雷达图" loading="lazy">
-          <figcaption>五个维度打分下来，NPO 当下综合最佳，CPO 是终态但短期落地受限</figcaption>
+          <img src="../assets/img/cioe/fig08.jpg" alt="CPO/NPO/XPO 雷达图" loading="lazy">
+          <figcaption>五维度打分：NPO 当下综合最佳，CPO 终态但短期落地受限</figcaption>
         </figure>
 
         <div class="table-wrap">
         <table>
           <thead><tr><th>维度</th><th>NPO</th><th>CPO</th></tr></thead>
           <tbody>
-            <tr><td>成熟度</td><td>✅ 最成熟，最快量产</td><td>还没到批量部署条件</td></tr>
-            <tr><td>可维护性</td><td>能换，但不能现场换</td><td>❌ 不可更换</td></tr>
-            <tr><td>密度</td><td>够用</td><td>✅ 最高</td></tr>
-            <tr><td>生态</td><td>✅ 开放</td><td>❌ 封闭、绑厂商</td></tr>
+            <tr><td>成熟度</td><td>最成熟，最快量产</td><td>未达批量部署条件</td></tr>
+            <tr><td>可维护性</td><td>能换，不可现场换</td><td>不可更换</td></tr>
+            <tr><td>密度</td><td>够用</td><td>最高</td></tr>
+            <tr><td>生态</td><td>开放</td><td>封闭、绑厂商</td></tr>
           </tbody>
         </table>
         </div>
 
         <p>
-          顺带一提，让我有点意外的是：在这件事上，<strong>中国其实已经站到了牌桌中间</strong>。
-          信通院联合华为、腾讯、中国移动，在 5 月 21 日向 OIF 提交了 12.8T 共封装模块的国际标准草案，
-          还通过了审议。标准话语权这东西，平时看不见，真到了关键时刻就是隐性的护城河。
+          一个值得记下的旁支：标准这条线上中国已经入局。信通院联合华为、腾讯、中国移动，
+          5 月 21 日向 OIF 提交了 12.8T 共封装模块标准草案并通过审议。标准话语权平时不显，
+          关键时刻是隐性壁垒。
         </p>
 
-        <h2>如果要排一张"时间表"</h2>
-        <p>
-          我个人不太信精确到月的预测，但论坛上拼出来的这条时间线，对判断节奏还是有用的。
-          我把它简化成几个关键节点：
-        </p>
+        <h2>时间线</h2>
+        <p>精确到月的预测我不太信，但拼出来的这条节奏线，对判断"什么时候该看什么"有用：</p>
 
         <div class="table-wrap">
         <table>
-          <thead><tr><th>时间</th><th>会发生什么</th></tr></thead>
+          <thead><tr><th>时间</th><th>节点</th></tr></thead>
           <tbody>
-            <tr><td>2025 年底</td><td>阿里云已点亮全球首个 OIF 标准 3.2T NPO 系统（验证完成）</td></tr>
-            <tr><td>2026 年底</td><td>⭐ 3.2T NPO 小批量商用启动——这是我最关注的节点</td></tr>
+            <tr><td>2025 年底</td><td>阿里云点亮全球首个 OIF 标准 3.2T NPO 系统（验证完成）</td></tr>
+            <tr><td>2026 年底</td><td>3.2T NPO 小批量商用启动</td></tr>
             <tr><td>2027 年</td><td>NPO 规模化；6.4T 首批商用；CPO 良率冲刺</td></tr>
             <tr><td>2028 年+</td><td>空芯光纤可能进集群；下一代技术冒头</td></tr>
           </tbody>
@@ -173,94 +146,67 @@
         </div>
 
         <p>
-          一句话：<strong>2026 年底到 2027 年，是 NPO 从"验证"走向"出货"的兑现期。</strong>
-          如果要找一个最清晰的催化剂，就是它。
+          落到一句：<strong>2026 年底到 2027 年，是 NPO 从验证走向出货的兑现期</strong>，也是这条线上最清晰的催化剂。
         </p>
 
-        <h2>几个我特别想多看一眼的环节</h2>
-        <p>
-          论坛把产业链拆成了七八个赛道挨个评级。我不打算把评分表整张搬过来（那太像研报了），
-          只挑几个让我"眼睛一亮"的，说说为什么。
-        </p>
+        <h2>几个环节单独记一下</h2>
+        <p>论坛把产业链拆成七八个赛道逐个评级。评分表不照搬，只留几个我想单独标记的。</p>
 
-        <h3>硅光：所有路线的共同地基</h3>
+        <h3>硅光：所有路线的共同底层</h3>
         <p>
-          最打动我的一点是：无论你押 NPO、CPO 还是 XPO，<strong>底下都是硅光（Silicon Photonics）</strong>。
-          需求侧的百度、阿里云，和供给侧的长光华芯、CUMEC，居然不约而同强调了这句话。
-          当买家和卖家在同一件事上达成共识，这种信号通常很值钱。国产化率现在还不到 10%，空间不用多说。
+          不管押 NPO、CPO 还是 XPO，底下都是硅光。需求侧（百度、阿里云）和供给侧（长光华芯、CUMEC）
+          在这点上说法一致——买卖双方的共识，通常比单方面的判断更可信。国产化率目前不到 10%。
         </p>
 
         <figure>
-          <img src="../assets/img/cioe/fig12.jpg" alt="长光华芯 Hi-ONE SiPh NPO 光引擎" loading="lazy">
-          <figcaption>长光华芯的 Hi-ONE 光引擎：36×224G，做到 30mm×40mm，能传超过一百米</figcaption>
+          <img src="../assets/img/cioe/fig12.jpg" alt="长光华芯光引擎" loading="lazy">
+          <figcaption>长光华芯 Hi-ONE 光引擎：36×224G，30mm×40mm，传输超百米</figcaption>
         </figure>
 
-        <h3>FAU：典型的"卖铲子"生意</h3>
+        <h3>FAU：卖铲子的位置</h3>
         <p>
-          这个我之前几乎没注意过。FAU（光纤阵列单元）是光路进出封装的"物理门户"，
-          说白了——<strong>不管哪条技术路线赢，都得用它</strong>。这就是经典的卖水/卖铲子逻辑。
-          逻云光现场展示的 2D FAU，3600 根光纤塞进 24×24×4mm，全场都在拍照。
-          全球能量产 2D FAU 的厂商不到 5 家，稀缺性摆在那。
+          FAU（光纤阵列单元）是光路进出封装的物理接口，不管哪条路线赢都得用——典型的卖铲子逻辑。
+          逻云光的 2D FAU 把 3600 根光纤塞进 24×24×4mm，全球能量产的不到 5 家。稀缺性是它的护城河。
         </p>
 
         <figure>
           <img src="../assets/img/cioe/fig13.jpg" alt="逻云光 2D FAU" loading="lazy">
-          <figcaption>逻云光的 2D FAU——3600 根光纤，只有指甲盖大小</figcaption>
+          <figcaption>逻云光 2D FAU——3600 根光纤，指甲盖大小</figcaption>
         </figure>
 
-        <h3>空芯光纤：还早，但拐点在靠近</h3>
+        <h3>空芯光纤：远期，但拐点在靠近</h3>
         <p>
-          这个偏远期，我把它归到"值得盯着、但别急"那一类。中国移动王东披露的几个数字挺震撼的：
-          两年里单价掉了 <strong>500 多倍</strong>，单次拉丝长度从不到 1 公里做到了 90 公里，损耗压到 0.1 dB/km 以下。
-          它传得更快、损耗更低、非线性几乎可以忽略。商业化拐点，看起来真的在靠近了。
+          归到"盯着、别急"那类。中国移动王东给的数据：两年单价降了 500 多倍，单次拉丝从不到 1 公里
+          做到 90 公里，损耗压到 0.1 dB/km 以下。传得更快、损耗更低。拐点在靠近，但还没到。
         </p>
 
         <figure>
-          <img src="../assets/img/cioe/fig14.jpg" alt="空芯光纤产业化进展" loading="lazy">
-          <figcaption>空芯光纤的截面结构与 90km 拉丝突破</figcaption>
+          <img src="../assets/img/cioe/fig14.jpg" alt="空芯光纤进展" loading="lazy">
+          <figcaption>空芯光纤截面结构与 90km 拉丝突破</figcaption>
         </figure>
 
-        <h3>还有一个常被忘记的：测试</h3>
+        <h3>测试：被忽略的刚需</h3>
         <p>
-          速率每升一代（400G→800G→1.6T），测试的难度和成本就翻一倍，而且这步<em>省不掉</em>。
-          这是刚需里的刚需。只是高端测试仪器现在还牢牢攥在是德、Viavi 这些手里，国产替代率不到 5%——
-          缺口大，机会也大。
+          速率每升一代（400G→800G→1.6T），测试难度和成本翻倍，且省不掉。高端仪器仍由是德、Viavi
+          主导，国产替代率不到 5%。缺口在这。
         </p>
 
-        <figure>
-          <img src="../assets/img/cioe/fig15.jpg" alt="是德科技 XPO 测试方案" loading="lazy">
-          <figcaption>是德科技的 XPO 光口测试方案——速率越高，测试越贵，也越不可省</figcaption>
-        </figure>
-
-        <h2>最后，几句提醒自己的话</h2>
+        <h2>给自己留的几条结论</h2>
+        <p>整理到最后，落几条供以后对照的判断：</p>
+        <ul>
+          <li>趋势（需求）确定，路径（路线）不确定。这两件事得分开看。</li>
+          <li>"做 AI 光模块"和"做光模块"是两回事；不升级光引擎能力的传统厂商，毛利会被磨。</li>
+          <li>CPO 2027 年前难兑现，纯概念高估值需要打折看。</li>
+          <li>单一客户占比过半的供应商，议价权比账面脆弱。</li>
+        </ul>
         <p>
-          写到这儿，我得给前面的乐观泼点冷水。趋势是确定的，但<strong>路径不是</strong>，下面几个坑我会一直记着：
+          就先记到这。结论会不会被打脸，过一两年回来看就知道了。
         </p>
-        <div class="callout">
-          <ul>
-            <li><strong>"做 AI 光模块" ≠ "做光模块"。</strong>传统模块厂如果不升级到光引擎能力，毛利会被慢慢磨掉。</li>
-            <li><strong>小心 CPO 概念炒作。</strong>它 2027 年前很难真兑现，纯概念的高估值要警惕。</li>
-            <li><strong>看清单一大客户依赖。</strong>某一家客户占比超过一半的供应商，议价权其实很脆弱。</li>
-          </ul>
-        </div>
-
-        <p>
-          所以我的态度大概是这样：<strong>对方向乐观，对具体赢家谦卑。</strong>
-          这恰恰是它有意思的地方——确定的趋势，不确定的路径。这种时候，与其赌谁是冠军，
-          不如先理解整张牌桌。
-        </p>
-        <p>
-          论坛结束时，CIOE 的杨耕硕在致辞里说了一句话，我抄了下来，作为这篇的结尾挺合适：
-        </p>
-        <blockquote>
-          光互连已经从一项支撑性技术，变成了决定算力效能、功耗与成本的核心瓶颈。
-        </blockquote>
-        <p class="source">—— CIOE 副主席兼秘书长 杨耕硕 · 开幕致辞</p>
 
         <hr>
         <p class="article-meta">
-          本文基于 2026 年 5 月 28 日「xPO 赋能 AI 数据中心光互联论坛」的现场内容整理，
-          图表来自论坛公开演讲材料，版权归原作者所有。文中观点为个人记录，仅供交流，不构成投资建议。
+          本文基于 2026 年 5 月 28 日「xPO 赋能 AI 数据中心光互联论坛」现场内容整理，
+          图表来自论坛公开演讲材料，版权归原作者所有。个人记录，不构成投资建议。
         </p>
       </article>
 
